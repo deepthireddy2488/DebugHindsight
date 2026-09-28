@@ -2,23 +2,23 @@ DebugHindsight
 
 An AI-powered debugging agent with persistent memory.
 
-DebugHindsight helps developers investigate software bugs using previous debugging experience instead of starting from scratch every time.
+DebugHindsight helps developers investigate software bugs using relevant debugging experience from the past instead of starting from scratch every time.
 
-The system combines Groq for AI reasoning with Hindsight for persistent memory. When a bug is submitted, DebugHindsight searches past debugging experiences, identifies genuinely relevant incidents, uses those experiences during the investigation, and stores the new debugging session for future use.
+The system combines Groq for AI reasoning with Hindsight for persistent memory. When a bug is submitted, DebugHindsight searches previous debugging experiences, checks whether they are genuinely relevant, uses useful experience during the investigation, and stores the new debugging session for future use.
 
 Why DebugHindsight?
 
-Traditional AI debugging tools can analyze the current error, but each debugging session may begin with little or no knowledge of what was tried before.
+Most debugging sessions are treated as isolated events. A developer may solve a problem today, but the useful reasoning, attempted approaches, and lessons from that incident are often difficult to reuse later.
 
-DebugHindsight focuses on the missing piece: long-term debugging memory.
+DebugHindsight focuses on that missing layer: persistent debugging memory.
 
-For every bug, the agent follows a simple cycle:
+The core cycle is:
 
 Bug Report
     ↓
 Recall Previous Experience
     ↓
-Check Relevance
+Check Technical Relevance
     ↓
 AI Investigation
     ↓
@@ -28,33 +28,41 @@ Store New Experience
     ↓
 Future Bugs Benefit From It
 
-This allows the debugging process to improve through accumulated experience.
+The result is a debugging assistant that can build on previous incidents over time.
 
 Key Features
 
 Persistent debugging memory
 
-DebugHindsight stores completed debugging experiences in Hindsight so they can be recalled when a future problem is technically related.
+DebugHindsight stores completed debugging experiences in Hindsight so that technically related incidents can be recalled later.
 
 Relevance-aware recall
 
-The agent does not treat every retrieved memory as useful. A previous experience is considered relevant based on the technical problem, failure mechanism, debugging approach, or solution rather than simply sharing the same programming language or framework.
+The agent does not automatically treat every retrieved memory as useful. Relevance is based on the technical problem, failure mechanism, debugging approach, or solution rather than simply matching a programming language or framework.
 
 AI-assisted investigation
 
-Groq is used to analyze the current bug together with the retrieved debugging experience and provide technical reasoning.
+Groq is used to reason about the current bug together with relevant information retrieved from Hindsight.
 
-Practical next steps
+Structured debugging guidance
 
-The system generates a structured investigation and a clear set of debugging actions instead of returning only a general explanation.
+Each investigation is presented through four clear sections:
+
+Memory Check
+
+Previous Experience
+
+Current Investigation
+
+Recommended Next Steps
 
 Experience storage
 
-After each debugging session, the investigation is converted into a reusable debugging experience and stored back in Hindsight.
+After each debugging session, the result is converted into a reusable debugging experience and stored back in Hindsight.
 
 Debugging history
 
-The frontend keeps a history of previous debugging sessions so developers can review earlier investigations.
+The frontend maintains a history of previous debugging sessions so developers can review earlier investigations.
 
 Tech Stack
 
@@ -88,47 +96,83 @@ VS Code
 
 System Architecture
 
-                         ┌──────────────────────┐
-                         │      Developer       │
-                         │   Enters Bug Report  │
-                         └──────────┬───────────┘
-                                    │
-                                    ▼
-                         ┌──────────────────────┐
-                         │      React UI        │
-                         │   DebugHindsight     │
-                         └──────────┬───────────┘
-                                    │ HTTP
-                                    ▼
-                         ┌──────────────────────┐
-                         │     FastAPI API      │
-                         │    /api/debug        │
-                         └──────────┬───────────┘
-                                    │
-                     ┌──────────────┴──────────────┐
-                     │                             │
-                     ▼                             ▼
-             ┌────────────────┐           ┌────────────────┐
-             │    Hindsight   │           │      Groq      │
-             │ Recall Memory  │           │ AI Reasoning   │
-             └───────┬────────┘           └───────┬────────┘
-                     │                             │
-                     └──────────────┬──────────────┘
-                                    │
-                                    ▼
-                         ┌──────────────────────┐
-                         │   Debugging Result   │
-                         │ • Memory Check       │
-                         │ • Previous Experience│
-                         │ • Investigation      │
-                         │ • Next Steps         │
-                         └──────────┬───────────┘
-                                    │
-                                    ▼
-                         ┌──────────────────────┐
-                         │  Store New Experience│
-                         │    in Hindsight      │
-                         └──────────────────────┘
+                              ┌──────────────────────┐
+                              │      Developer       │
+                              │     Bug Report       │
+                              └──────────┬───────────┘
+                                         │
+                                         ▼
+                              ┌──────────────────────┐
+                              │    React Frontend    │
+                              │      Web UI           │
+                              └──────────┬───────────┘
+                                         │ HTTP Request
+                                         ▼
+                              ┌──────────────────────┐
+                              │     FastAPI Backend  │
+                              │      /api/debug      │
+                              └──────────┬───────────┘
+                                         │
+                                         ▼
+                              ┌──────────────────────┐
+                              │   Debugging Agent    │
+                              │      Core Logic      │
+                              └──────────┬───────────┘
+                                         │
+                         ┌───────────────┴───────────────┐
+                         │                               │
+                         ▼                               ▼
+                ┌────────────────┐              ┌────────────────┐
+                │    Hindsight   │              │      Groq      │
+                │ Persistent     │              │ AI Reasoning   │
+                │ Memory         │              │                │
+                ├────────────────┤              ├────────────────┤
+                │ Recall past    │              │ Analyze current│
+                │ experiences    │              │ bug            │
+                │                │              │                │
+                │ Store new      │              │ Use relevant   │
+                │ experiences    │              │ context        │
+                └───────┬────────┘              └───────┬────────┘
+                        │                               │
+                        └───────────────┬───────────────┘
+                                        ▼
+                              ┌──────────────────────┐
+                              │ Debugging Result     │
+                              ├──────────────────────┤
+                              │ Memory Check         │
+                              │ Previous Experience  │
+                              │ Current Investigation│
+                              │ Recommended Steps   │
+                              └──────────┬───────────┘
+                                         │
+                                         ▼
+                              ┌──────────────────────┐
+                              │ Store New Experience │
+                              │     in Hindsight     │
+                              └──────────┬───────────┘
+                                         │
+                                         └───────► Future
+                                                   Bugs
+
+Memory loop
+
+The most important part of the architecture is the memory loop:
+
+Current Bug
+    ↓
+Hindsight Recall
+    ↓
+Relevant Experience
+    ↓
+Groq Analysis
+    ↓
+Investigation + Next Steps
+    ↓
+New Debugging Experience
+    ↓
+Hindsight Retain
+    ↓
+Available for Future Bugs
 
 Project Structure
 
@@ -167,23 +211,25 @@ The developer describes the problem through the React interface.
 
 2. Recall previous experience
 
-The FastAPI backend sends the bug context to Hindsight and retrieves previous debugging experiences related to the issue.
+The FastAPI backend sends the bug context to Hindsight and retrieves previous debugging experiences that may be relevant.
 
 3. Check relevance
 
-Retrieved memories are evaluated for meaningful technical relevance. Unrelated experiences are not presented as useful solutions.
+The retrieved memories are evaluated for meaningful technical relevance. Experiences that are unrelated to the actual problem should not be presented as solutions.
 
 4. Investigate with AI
 
-Groq analyzes the current bug and the relevant previous experience. The result is organized into:
+Groq analyzes the current bug together with the relevant debugging context and provides technical reasoning.
 
-Memory Check
+The result is organized into:
 
-Previous Experience
+Memory Check — whether a relevant incident was found
 
-Current Investigation
+Previous Experience — useful earlier approaches and outcomes
 
-Recommended Next Steps
+Current Investigation — how the current issue should be investigated
+
+Recommended Next Steps — practical debugging actions
 
 5. Store the new experience
 
@@ -191,17 +237,17 @@ The completed debugging session is saved back into Hindsight as a new memory.
 
 6. Learn from future incidents
 
-When a similar bug appears later, the newly stored experience can be retrieved and used as part of the next investigation.
+When a similar bug appears later, the newly stored experience can be recalled and used during the next investigation.
 
 Example
 
-Suppose a developer reports:
+A developer submits:
 
 My FastAPI API starts timing out when around 50 concurrent users make database requests.
 
-DebugHindsight can recall earlier experiences involving FastAPI performance, database connection pooling, event-loop blocking, or request throttling when they are technically relevant.
+DebugHindsight can retrieve previous experiences involving FastAPI performance, database connection pooling, event-loop blocking, or request throttling when they are technically relevant.
 
-The agent then presents the previous approaches, investigates the current problem, recommends next debugging actions, and stores the new experience.
+The agent then presents the useful previous experience, investigates the current problem, recommends practical next steps, and stores the new debugging experience.
 
 A later performance issue can therefore benefit from what was learned during the earlier session.
 
@@ -270,11 +316,11 @@ http://127.0.0.1:5173
 
 Testing the Memory Loop
 
-A simple demonstration is to test the same type of problem more than once.
+A simple demonstration is to test several bug reports in sequence.
 
 Test 1 — new problem
 
-Submit a bug that has no previous relevant experience.
+Submit a bug for which there is no previous relevant experience.
 
 Expected behavior:
 
@@ -299,11 +345,11 @@ Expected behavior:
 
 No related incident
 
-This demonstrates that DebugHindsight is not simply matching keywords or returning every memory as relevant.
+These tests demonstrate that DebugHindsight can distinguish between a useful previous debugging experience and an unrelated memory.
 
 Memory Management Utilities
 
-The backend includes small utility scripts for checking and cleaning the Hindsight memory bank.
+The backend includes utility scripts for checking and cleaning the Hindsight memory bank.
 
 Check stored memories:
 
@@ -333,7 +379,7 @@ GET
 
 /api/history
 
-Retrieve recent debugging history
+Retrieve debugging history
 
 GET
 
@@ -343,25 +389,48 @@ Open FastAPI Swagger documentation
 
 Security Notes
 
-API credentials are stored locally in backend/.env and are excluded from Git through .gitignore.
+API credentials are stored locally in backend/.env and excluded from Git through .gitignore.
 
 Never commit API keys, passwords, or other secrets to the repository.
 
 Current Scope
 
-DebugHindsight is a working prototype focused on demonstrating persistent memory for software debugging. The current implementation uses Hindsight as the memory layer, Groq for reasoning, FastAPI for the backend, and React for the user interface.
+DebugHindsight is a working prototype focused on demonstrating persistent memory for software debugging.
 
-Future versions can extend the system with richer debugging tools, source-code analysis, repository integration, automated log collection, and additional developer workflows.
+The current implementation uses:
+
+Hindsight as the persistent memory layer
+
+Groq for AI reasoning
+
+FastAPI for the backend API
+
+React for the frontend interface
+
+Future Improvements
+
+Possible future extensions include:
+
+Repository and GitHub integration
+
+Source-code-aware debugging
+
+Automated log and stack-trace collection
+
+Deeper code analysis
+
+More debugging tools and workflows
+
+PostgreSQL-backed application data and analytics
 
 Project Goal
 
-The goal of DebugHindsight is simple:
-
 Make debugging improve with experience.
 
-Instead of treating every bug as a completely new problem, the system gives an AI debugging agent a persistent memory of what happened before, what approaches were tried, and what was learned.
+Instead of treating every bug as a completely new problem, DebugHindsight gives an AI debugging agent a persistent memory of what happened before, which approaches were tried, and what was learned.
 
 Author
 
 Deepthi Reddy
+
 GitHub: deepthireddy2488
