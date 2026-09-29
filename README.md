@@ -1,435 +1,546 @@
 DebugHindsight
 
-An AI-powered debugging agent with persistent memory.
+An AI-powered debugging agent with persistent memory that learns from previous debugging experiences.
 
-DebugHindsight helps developers investigate software bugs using relevant debugging experience from the past instead of starting from scratch every time.
+DebugHindsight is an AI-assisted software debugging system designed to make debugging more context-aware, reusable, and experience-driven.
 
-The system combines Groq for AI reasoning with Hindsight for persistent memory. When a bug is submitted, DebugHindsight searches previous debugging experiences, checks whether they are genuinely relevant, uses useful experience during the investigation, and stores the new debugging session for future use.
+Instead of treating every bug as an isolated incident, DebugHindsight retrieves technically relevant debugging experiences from previous investigations, evaluates their relevance to the current problem, uses them as context for AI-powered analysis, and stores the new investigation for future use.
 
-Why DebugHindsight?
+The result is a persistent debugging memory loop where every completed investigation can improve future debugging sessions.
 
-Most debugging sessions are treated as isolated events. A developer may solve a problem today, but the useful reasoning, attempted approaches, and lessons from that incident are often difficult to reuse later.
+✨ Why DebugHindsight?
+Traditional AI debugging typically starts from the current bug and has no persistent knowledge of how similar problems were solved previously.
 
-DebugHindsight focuses on that missing layer: persistent debugging memory.
+DebugHindsight introduces a memory layer into the debugging workflow.
 
-The core cycle is:
-
+Traditional Debugging
 Bug Report
-    ↓
-Recall Previous Experience
-    ↓
-Check Technical Relevance
     ↓
 AI Investigation
     ↓
-Recommended Next Steps
+Suggested Solution
     ↓
-Store New Experience
-    ↓
-Future Bugs Benefit From It
+Session Ends
 
-The result is a debugging assistant that can build on previous incidents over time.
+DebugHindsight
 
-Key Features
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/cc0219d9-f720-4c2e-bc67-e8f4968fa8b1"
+    alt="DebugHindsight Memory Flow"
+    width="400"
+  />
+</p>
+The key idea is simple:
 
-Persistent debugging memory
+Every debugging session becomes potential knowledge for the next one.
 
-DebugHindsight stores completed debugging experiences in Hindsight so that technically related incidents can be recalled later.
+🚀 Key Features
+🧠 Persistent Debugging Memory
+DebugHindsight stores completed debugging sessions in Hindsight, allowing future investigations to retrieve relevant experiences.
 
-Relevance-aware recall
+Stored experiences can include:
 
-The agent does not automatically treat every retrieved memory as useful. Relevance is based on the technical problem, failure mechanism, debugging approach, or solution rather than simply matching a programming language or framework.
+The original bug
 
-AI-assisted investigation
+Technical context
 
-Groq is used to reason about the current bug together with relevant information retrieved from Hindsight.
+Investigation reasoning
 
-Structured debugging guidance
+Approaches attempted
 
-Each investigation is presented through four clear sections:
+Observed outcomes
 
-Memory Check
+Root-cause insights
 
-Previous Experience
+Recommended debugging techniques
 
-Current Investigation
+🎯 Relevance-Aware Recall
+Retrieved memories are not automatically treated as solutions.
 
-Recommended Next Steps
+DebugHindsight evaluates whether previous experiences are technically relevant to the current problem.
 
-Experience storage
+Relevance can come from:
 
-After each debugging session, the result is converted into a reusable debugging experience and stored back in Hindsight.
+Similar failure mechanisms
 
-Debugging history
+Similar system behavior
 
-The frontend maintains a history of previous debugging sessions so developers can review earlier investigations.
+Similar debugging approaches
 
-Tech Stack
+Similar root causes
 
-Layer
+Similar architectural problems
 
-Technology
+Similar performance or runtime symptoms
 
-Frontend
+A shared programming language or framework alone does not make an experience relevant.
 
-React, Tailwind CSS
+For example:
 
-Backend
+Current Bug:
+FastAPI requests are timing out under concurrent database load.
 
-Python, FastAPI
+Potentially Relevant:
+✓ Database connection pool exhaustion
+✓ Blocking database operations
+✓ Event-loop blocking
+✓ Request concurrency issues
+✓ Connection throttling
 
-AI reasoning
+Potentially Irrelevant:
+✗ React component rendering issue
+✗ CSS layout problem
+✗ Unrelated authentication bug
 
-Groq
+🤖 AI-Assisted Investigation
+DebugHindsight uses Groq for AI reasoning.
 
-Persistent memory
-
-Hindsight
-
-Frontend tooling
-
-Vite
-
-Development
-
-VS Code
-
-System Architecture
-
-                              ┌──────────────────────┐
-                              │      Developer       │
-                              │     Bug Report       │
-                              └──────────┬───────────┘
-                                         │
-                                         ▼
-                              ┌──────────────────────┐
-                              │    React Frontend    │
-                              │      Web UI           │
-                              └──────────┬───────────┘
-                                         │ HTTP Request
-                                         ▼
-                              ┌──────────────────────┐
-                              │     FastAPI Backend  │
-                              │      /api/debug      │
-                              └──────────┬───────────┘
-                                         │
-                                         ▼
-                              ┌──────────────────────┐
-                              │   Debugging Agent    │
-                              │      Core Logic      │
-                              └──────────┬───────────┘
-                                         │
-                         ┌───────────────┴───────────────┐
-                         │                               │
-                         ▼                               ▼
-                ┌────────────────┐              ┌────────────────┐
-                │    Hindsight   │              │      Groq      │
-                │ Persistent     │              │ AI Reasoning   │
-                │ Memory         │              │                │
-                ├────────────────┤              ├────────────────┤
-                │ Recall past    │              │ Analyze current│
-                │ experiences    │              │ bug            │
-                │                │              │                │
-                │ Store new      │              │ Use relevant   │
-                │ experiences    │              │ context        │
-                └───────┬────────┘              └───────┬────────┘
-                        │                               │
-                        └───────────────┬───────────────┘
-                                        ▼
-                              ┌──────────────────────┐
-                              │ Debugging Result     │
-                              ├──────────────────────┤
-                              │ Memory Check         │
-                              │ Previous Experience  │
-                              │ Current Investigation│
-                              │ Recommended Steps   │
-                              └──────────┬───────────┘
-                                         │
-                                         ▼
-                              ┌──────────────────────┐
-                              │ Store New Experience │
-                              │     in Hindsight     │
-                              └──────────┬───────────┘
-                                         │
-                                         └───────► Future
-                                                   Bugs
-
-Memory loop
-
-The most important part of the architecture is the memory loop:
+The AI receives:
 
 Current Bug
-    ↓
-Hindsight Recall
-    ↓
-Relevant Experience
-    ↓
-Groq Analysis
-    ↓
-Investigation + Next Steps
-    ↓
-New Debugging Experience
-    ↓
-Hindsight Retain
-    ↓
-Available for Future Bugs
+     +
+Relevant Previous Experience
+     +
+Technical Context
+     ↓
+AI Investigation
+     ↓
+Debugging Guidance
 
-Project Structure
+This allows the agent to reason about the current problem while taking previous debugging knowledge into account.
 
-DebugHindsight/
-│
-├── backend/
-│   ├── main.py
-│   ├── agent.py
-│   ├── check_memories.py
-│   ├── clear_memories.py
-│   ├── test_hindsight.py
-│   ├── test_recall.py
-│   ├── requirements.txt
-│   ├── history.json
-│   └── .gitignore
-│
-├── frontend/
-│   ├── src/
-│   │   ├── App.jsx
-│   │   ├── App.css
-│   │   ├── index.css
-│   │   └── main.jsx
-│   ├── public/
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── vite.config.js
-│   └── .gitignore
-│
-└── README.md
+📋 Structured Debugging Results
+Every investigation is organized into four sections.
 
-How It Works
+1. Memory Check
+Determines whether a technically relevant previous debugging experience was found.
 
-1. Submit a bug
+2. Previous Experience
+Summarizes useful information from earlier debugging incidents.
 
-The developer describes the problem through the React interface.
+3. Current Investigation
+Analyzes the current bug using the available technical context.
 
-2. Recall previous experience
+4. Recommended Next Steps
+Provides practical actions that can be taken to investigate or resolve the issue.
 
-The FastAPI backend sends the bug context to Hindsight and retrieves previous debugging experiences that may be relevant.
+This structure makes the output easier to understand and act upon.
 
-3. Check relevance
+## 🏗️ System Architecture
 
-The retrieved memories are evaluated for meaningful technical relevance. Experiences that are unrelated to the actual problem should not be presented as solutions.
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/ce7b1723-3629-4e5b-bf9c-4db031fe8546"
+    alt="DebugHindsight System Architecture"
+    width="600"
+  />
+</p>
 
-4. Investigate with AI
+The architecture creates a continuous learning cycle:
 
-Groq analyzes the current bug together with the relevant debugging context and provides technical reasoning.
+**Recall → Reason → Investigate → Learn → Retain → Recall**
+🧩 Core Components
+Component	Responsibility
+React	User interface and debugging history
+Tailwind CSS	Frontend styling
+Vite	Frontend development and build tooling
+FastAPI	Backend REST API
+Debugging Agent	Investigation orchestration
+Groq	AI-powered reasoning
+Hindsight	Persistent debugging memory
+Python	Backend implementation
 
-The result is organized into:
+🛠️ Tech Stack
+Frontend
+React
+Tailwind CSS
+Vite
 
-Memory Check — whether a relevant incident was found
+Backend
+Python
+FastAPI
 
-Previous Experience — useful earlier approaches and outcomes
-
-Current Investigation — how the current issue should be investigated
-
-Recommended Next Steps — practical debugging actions
-
-5. Store the new experience
-
-The completed debugging session is saved back into Hindsight as a new memory.
-
-6. Learn from future incidents
-
-When a similar bug appears later, the newly stored experience can be recalled and used during the next investigation.
-
-Example
-
-A developer submits:
-
-My FastAPI API starts timing out when around 50 concurrent users make database requests.
-
-DebugHindsight can retrieve previous experiences involving FastAPI performance, database connection pooling, event-loop blocking, or request throttling when they are technically relevant.
-
-The agent then presents the useful previous experience, investigates the current problem, recommends practical next steps, and stores the new debugging experience.
-
-A later performance issue can therefore benefit from what was learned during the earlier session.
-
-Getting Started
-
-Prerequisites
-
-Make sure the following are installed:
-
-Python 3.10+
-
-Node.js and npm
-
-Git
-
-You also need access to:
-
+AI
 Groq
-
+Persistent Memory
 Hindsight
 
-1. Clone the repository
+Development
+VS Code
+Git
+npm
 
+## 📁 Project Structure
+
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/88b925f3-73b4-43fc-98ef-775accbdefc2"
+    alt="DebugHindsight Project Structure"
+    width="650"
+  />
+</p>
+
+⚙️ How It Works
+1. Submit a Bug
+The developer describes the problem through the React interface.
+
+Example:
+
+My FastAPI API starts timing out when around
+50 concurrent users make database requests.
+
+2. Recall Previous Experiences
+The backend sends the debugging context to Hindsight.
+
+Hindsight searches the persistent memory for previous debugging experiences that may contain useful technical knowledge.
+
+3. Evaluate Relevance
+The agent determines whether retrieved experiences are actually applicable.
+
+The system focuses on technical relationships, rather than simple keyword matching.
+
+For example:
+
+                    ┌──────────────────────┐
+                    │    Current Problem   │
+                    └──────────┬───────────┘
+                               │
+                 ┌─────────────┼─────────────┐
+                 │             │             │
+                 ▼             ▼             ▼
+             FastAPI    Concurrent Requests  Database
+                                             Timeouts
+                 │             │             │
+                 └─────────────┼─────────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │   Search Experience  │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │   Relevance Check    │
+                    └──────────┬───────────┘
+                               │
+                    ┌──────────┴──────────┐
+                    │                     │
+                    ▼                     ▼
+             ┌─────────────┐      ┌─────────────┐
+             │   Relevant  │      │  Irrelevant │
+             └──────┬──────┘      └──────┬──────┘
+                    │                    │
+                    ▼                    ▼
+             Use as Context           Discard
+
+
+4. Investigate with Groq
+Groq analyzes:
+
+Current Bug
+     +
+Relevant Debugging Experience
+     +
+Technical Context
+
+The agent produces structured debugging guidance.
+
+5. Present the Result
+The frontend displays:
+
+Memory Check
+      ↓
+Previous Experience
+      ↓
+Current Investigation
+      ↓
+Recommended Next Steps
+
+6. Store the Experience
+After the investigation is completed, the debugging session is converted into a reusable debugging experience.
+
+That experience is stored in Hindsight.
+
+7. Improve Future Investigations
+When a similar bug occurs later, the new experience becomes part of the searchable debugging knowledge base.
+
+This allows the system to progressively accumulate debugging knowledge.
+
+🧪 Example
+Initial Bug
+My FastAPI API starts timing out when around
+50 concurrent users make database requests.
+
+The system may retrieve experiences involving:
+
+Database connection pool exhaustion
+
+Blocking database operations
+
+Event-loop blocking
+
+Request concurrency
+
+Connection limits
+
+Request throttling
+
+The agent then combines relevant previous knowledge with the current bug and produces an investigation.
+
+A future performance issue can potentially retrieve the newly stored experience and build upon it.
+
+🧪 Testing the Memory Loop
+DebugHindsight can be tested using a sequence of debugging scenarios.
+
+Test 1 — New Problem
+Submit a bug with no previous relevant experience.
+
+Expected behavior:
+
+No relevant previous incident
+        ↓
+New investigation
+        ↓
+Experience stored
+
+Test 2 — Similar Problem
+Submit a technically similar bug.
+
+Expected behavior:
+
+Relevant incident found
+        ↓
+Previous experience used
+        ↓
+New investigation
+        ↓
+New experience stored
+
+Test 3 — Unrelated Problem
+Submit a fundamentally different issue, such as a React rendering problem after a backend performance investigation.
+
+Expected behavior:
+
+No technically relevant incident
+        ↓
+Current bug investigated independently
+
+These scenarios demonstrate the distinction between persistent memory and blindly reusing previous answers.
+
+🔌 API
+Method	Endpoint	Description
+POST	/api/debug	Submit a bug for AI-powered debugging
+GET	/api/history	Retrieve previous debugging sessions
+GET	/docs	Open FastAPI Swagger documentation
+
+🚀 Getting Started
+Prerequisites
+Install:
+Python 3.10+
+Node.js
+npm
+Git
+You also need credentials/access for:
+Groq
+Hindsight
+
+Clone the Repository
 git clone https://github.com/deepthireddy2488/DebugHindsight.git
 cd DebugHindsight
 
-2. Set up the backend
-
-Open a terminal in the project root and run:
+🔧 Backend Setup
+Navigate to the backend:
 
 cd backend
+
+Create a virtual environment:
+
+Windows
 python -m venv venv
 .\venv\Scripts\Activate.ps1
+
+macOS / Linux
+python3 -m venv venv
+source venv/bin/activate
+
+Install dependencies:
+
 pip install -r requirements.txt
 
-Create a file named .env inside backend/:
+Configure Environment Variables
+
+Create:
+
+backend/.env
+
+Add:
 
 GROQ_API_KEY=your_groq_api_key
+
 HINDSIGHT_API_KEY=your_hindsight_api_key
 
-Do not commit .env to GitHub.
+Security: Never commit .env, API keys, passwords, or other secrets to GitHub.
 
 Start the FastAPI server:
 
 uvicorn main:app --reload
 
-The backend will be available at:
+Backend:
 
 http://127.0.0.1:8000
 
-FastAPI Swagger documentation:
+Swagger documentation:
 
 http://127.0.0.1:8000/docs
 
-3. Set up the frontend
+💻 Frontend Setup
 
-Open a second terminal:
+Open a second terminal.
+
+Navigate to:
 
 cd frontend
+
+Install dependencies:
+
 npm install
+
+Start the Vite development server:
+
 npm run dev
 
-Open the local Vite URL shown in the terminal, normally:
+Open the local URL displayed by Vite, typically:
 
 http://127.0.0.1:5173
 
-Testing the Memory Loop
+🧠 Memory Management
 
-A simple demonstration is to test several bug reports in sequence.
+DebugHindsight includes utilities for inspecting and managing stored debugging experiences.
 
-Test 1 — new problem
 
-Submit a bug for which there is no previous relevant experience.
+View Stored Memories
 
-Expected behavior:
-
-No related incident
-Experience saved
-
-Test 2 — similar problem
-
-Submit a technically similar bug again.
-
-Expected behavior:
-
-Related incident found
-Previous debugging experience was used
-Experience saved
-
-Test 3 — unrelated problem
-
-Submit a different type of bug, such as a React rendering issue after testing a backend performance problem.
-
-Expected behavior:
-
-No related incident
-
-These tests demonstrate that DebugHindsight can distinguish between a useful previous debugging experience and an unrelated memory.
-
-Memory Management Utilities
-
-The backend includes utility scripts for checking and cleaning the Hindsight memory bank.
-
-Check stored memories:
+cd backend
 
 python check_memories.py
 
-Clear the memory bank:
+Clear Memories
 
 python clear_memories.py
 
-The cleanup script asks for confirmation before deleting memories.
+The cleanup utility asks for confirmation before deleting stored memories.
 
-API Endpoints
 
-Method
+🔐 Security
+DebugHindsight uses API credentials for external AI and memory services.
 
-Endpoint
+Follow these practices:
 
-Purpose
+Store credentials in .env
 
-POST
+Add .env to .gitignore
 
-/api/debug
+Never commit API keys
 
-Submit a bug for AI-powered debugging
+Never expose secrets in frontend code
 
-GET
+Rotate credentials if they are accidentally exposed
 
-/api/history
+Avoid logging sensitive credentials or private debugging information
 
-Retrieve debugging history
+📌 Current Scope
+DebugHindsight is currently a working prototype focused on demonstrating persistent memory for software debugging.
 
-GET
+The current implementation provides:
 
-/docs
+Persistent debugging experiences
 
-Open FastAPI Swagger documentation
+Hindsight-based recall
 
-Security Notes
+Relevance-aware memory usage
 
-API credentials are stored locally in backend/.env and excluded from Git through .gitignore.
+Groq-powered reasoning
 
-Never commit API keys, passwords, or other secrets to the repository.
+FastAPI backend
 
-Current Scope
+React frontend
 
-DebugHindsight is a working prototype focused on demonstrating persistent memory for software debugging.
+Debugging history
 
-The current implementation uses:
+Memory management utilities
 
-Hindsight as the persistent memory layer
+🔮 Future Improvements
+Potential extensions include:
 
-Groq for AI reasoning
+Repository Integration
+Connect debugging investigations directly to GitHub repositories and source code.
 
-FastAPI for the backend API
+Source-Code-Aware Debugging
+Allow the agent to inspect relevant files, functions, and dependencies.
 
-React for the frontend interface
+Automated Logs & Stack Traces
+Automatically collect and analyze:
 
-Future Improvements
+Stack traces
 
-Possible future extensions include:
+Application logs
 
-Repository and GitHub integration
+Runtime errors
 
-Source-code-aware debugging
+Performance metrics
 
-Automated log and stack-trace collection
+Deeper Code Analysis
+Add automated static analysis and code-level investigation.
 
-Deeper code analysis
+Advanced Debugging Workflows
+Introduce specialized workflows for:
 
-More debugging tools and workflows
+Performance debugging
 
-PostgreSQL-backed application data and analytics
+API debugging
 
-Project Goal
+Database issues
 
-Make debugging improve with experience.
+Frontend errors
 
-Instead of treating every bug as a completely new problem, DebugHindsight gives an AI debugging agent a persistent memory of what happened before, which approaches were tried, and what was learned.
+Distributed systems
 
-Author
+Deployment failures
+
+Analytics
+Add PostgreSQL-backed analytics for:
+
+Debugging frequency
+
+Common failure patterns
+
+Resolution rates
+
+Frequently reused experiences
+
+Investigation history
+
+🎯 Project Goal
+DebugHindsight aims to make debugging improve with experience.
+
+Instead of treating every software bug as a completely new problem, the system maintains a persistent record of:
+
+What happened
+     ↓
+What was investigated
+     ↓
+What approaches were tried
+     ↓
+What was learned
+     ↓
+What can be reused
+
+Over time, these experiences become a reusable debugging knowledge base.
+
+Debug once. Remember the experience. Debug better next time.
+
+👩‍💻 Author
 
 Deepthi Reddy
 
